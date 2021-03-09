@@ -47,5 +47,5 @@ if __name__ == "__main__":
     for i in range(len(DATABASE_TMP)):
         ip_database[str(i)] = DATABASE_TMP[i]
     
-    app.run(debug=True,host='0.0.0.0') 
+    app.run(debug=True,host='0.0.0.0', port = int(os.environ.get('PORT',5000))) 
 
