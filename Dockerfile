@@ -7,4 +7,5 @@ RUN pip install -r requirements.txt
 
 ADD . /app 
 
-# RUN ["chmod", "+x", "startapplication.sh"]
+EXPOSE 5000
+CMD python main.py
