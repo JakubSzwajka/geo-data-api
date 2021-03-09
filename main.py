@@ -3,6 +3,8 @@ from flask_restful import Api, Resource, reqparse, abort
 
 from test_db import DATABASE_TMP
 
+import os
+
 app = Flask(__name__)
 api = Api(app)
 
@@ -40,4 +42,10 @@ class Ip_address(Resource):
 api.add_resource(Ip_address, "/ip/<string:ip_data_id>")
 
 if __name__ == "__main__":
-    app.run(debug=True) 
+
+    # for testing online 
+    for i in range(len(DATABASE_TMP)):
+        ip_database[str(i)] = DATABASE_TMP[i]
+    
+    app.run(debug=True,host='0.0.0.0') 
+
