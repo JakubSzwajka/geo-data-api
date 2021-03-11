@@ -10,7 +10,8 @@ import json
 DATABASE_PATH = 'db/database.db'
 app = Flask(__name__)
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DATABASE_PATH}'
+# app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DATABASE_PATH}'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://bvahrjumxffaet:fb698577cefb50b44f549bfb6ec3106736ae71219d2c3f69aeae7b8e361caf05@ec2-54-155-87-214.eu-west-1.compute.amazonaws.com:5432/d38t2r3sfa67np'
 db = SQLAlchemy(app)
 
 single_ip_model = {
@@ -128,9 +129,9 @@ def get_all_ip_obj():
     return {"result": [dict(ord_dict) for ord_dict in ord_dict_list ]}
 
 if __name__ == "__main__":
-    if not os.path.isfile(DATABASE_PATH):
+    # if not os.path.isfile(DATABASE_PATH):
         # do it only for the first go 
-        db.create_all()
+    db.create_all()
 
     app.run(debug=True,host='0.0.0.0', port = int(os.environ.get('PORT',5000))) 
 
