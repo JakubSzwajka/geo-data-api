@@ -4,14 +4,13 @@ from flask import Flask, request
 from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with, marshal
 from flask_sqlalchemy import SQLAlchemy
 
-from test_db import DATABASE_TMP
-
 import os
 import json
 
+DATABASE_PATH = 'db/database.db'
 app = Flask(__name__)
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DATABASE_PATH}'
 db = SQLAlchemy(app)
 
 single_ip_model = {
@@ -53,8 +52,6 @@ class IP_Model(db.Model):
     def __repr__(self):
         return f"ID: {self.id}, ip: {self.ip} - {self.type} - {self.continent_code}"
     
-# do it only for the first go 
-# db.create_all()
 
 ip_address_put_args = reqparse.RequestParser()
 ip_address_put_args.add_argument("ip", type=str, help="Ip address needed", required=True)
@@ -131,5 +128,9 @@ def get_all_ip_obj():
     return {"result": [dict(ord_dict) for ord_dict in ord_dict_list ]}
 
 if __name__ == "__main__":
+    if not os.path.isfile(DATABASE_PATH):
+        # do it only for the first go 
+        db.create_all()
+
     app.run(debug=True,host='0.0.0.0', port = int(os.environ.get('PORT',5000))) 
 
