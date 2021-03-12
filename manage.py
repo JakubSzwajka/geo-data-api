@@ -8,7 +8,7 @@ from flask_restful import Api
 from app.main import create_app, db
 from app.main.controller.ip_address_controller import Ip_address_controller 
 
-app = create_app(os.getenv('CONFIG') or 'dev')
+app = create_app(os.getenv('CONFIG_TYPE') or 'dev')
 app.app_context().push()
 
 api = Api(app)
