@@ -22,6 +22,4 @@ __pycache__/
 venv/
 
 **/.devcontainer
-
-
-key
+**/db
