@@ -18,6 +18,14 @@ def create_new_ip_address(data):
     save_changes(ip_obj)
     return ip_obj 
 
+def create_new_ip_addresses(data):
+    new_obj_list = []
+
+    for obj in data["data"]:
+        new_obj_list.append(create_new_ip_address(obj))
+    
+    return new_obj_list
+
 def update_ip_address(data):
     result_obj = Ip_address.query.filter_by(ip=data['ip']).first()
     if not result_obj:

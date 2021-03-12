@@ -1,6 +1,7 @@
 
 from flask.globals import request
 from flask_restful import Resource, marshal_with, abort, reqparse
+from flask_testing.utils import ContextVariableDoesNotExist
 from ..model.ip_address import Ip_address, single_ip_model 
 from ..service.ip_address_service import * 
 
@@ -27,7 +28,11 @@ class Ip_address_controller(Resource):
     def put(self):
         args = request.json 
         
-        new_ip_obj = create_new_ip_address(data=args)
+        if "data" in args.keys():
+            new_ip_obj = create_new_ip_addresses(data=args)
+        else:
+            new_ip_obj = create_new_ip_address(data=args)
+        
         if not new_ip_obj:
             abort(409, message=f"Ip_address with ip {args['ip']} already exist.")
       

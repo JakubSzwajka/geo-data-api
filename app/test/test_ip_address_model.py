@@ -16,6 +16,16 @@ def add_new_obj_by_ip(self, ip, type = 'ipv4', continent_code = 'EU'):
         content_type='application/json'
     )
 
+def add_multiple_objs(self, list_ips ):
+    return self.client.put(
+        '/ip_data',
+        data=json.dumps(dict(
+            data = [ dict( ip = ip, type = 'ipv4', continent_code = 'EU' ) for ip in list_ips ]
+        )),
+        content_type='application/json'
+    )
+    
+
 def get_obj_by_ip(self, ip ):
     return self.client.get(
         '/ip_data',
@@ -73,6 +83,20 @@ class Ip_address_test_case(BaseTestCase):
             self.assertEqual(response_get.status_code, 200)
             self.assertEqual(response_data["ip"], tested_with_ip)
 
+    def test_add_multiple_ip_addresses(self):
+        testing_ips = ["123.123.123.113", "123.123.123.111", "555.123.123.113", "www.google.com"]
+
+        with self.client:
+            response_add = add_multiple_objs(self, testing_ips)
+            response_data = json.loads(response_add.data.decode())
+            response_ips = []
+
+            for resp_obj in response_data:
+                response_ips.append(resp_obj["ip"])
+
+            for test_ip in testing_ips:
+                self.assertIn(test_ip, response_ips)
+                
     def test_update_ip_address_obj(self):
         tested_with_ip = "123.123.123.113"
         with self.client:
