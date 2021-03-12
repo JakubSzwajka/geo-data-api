@@ -20,11 +20,11 @@ manager.add_command('db', MigrateCommand)
 
 @app.route('/')
 def hello():
-    return 'hello'
+    return {'hello':'message'}
 
 @manager.command
 def run():
-    app.run()
+    app.run(host='0.0.0.0')
 
 @manager.command
 def test():
