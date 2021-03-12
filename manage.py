@@ -18,6 +18,10 @@ manager = Manager(app)
 migrate = Migrate(app, db)
 manager.add_command('db', MigrateCommand)
 
+@app.route('/')
+def hello():
+    return 'hello'
+
 @manager.command
 def run():
     app.run()
