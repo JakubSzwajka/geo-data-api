@@ -7,12 +7,13 @@ from flask_restful import Api
 
 from app.main import create_app, db
 from app.main.controller.ip_address_controller import Ip_address_controller 
+from app.main.utils import return_all_objs
 
 app = create_app(os.getenv('CONFIG_TYPE') or 'dev')
 app.app_context().push()
 
 api = Api(app)
-api.add_resource(Ip_address_controller, "/ip")
+api.add_resource(Ip_address_controller, "/ip_data")
 
 manager = Manager(app)
 migrate = Migrate(app, db)
@@ -20,7 +21,11 @@ manager.add_command('db', MigrateCommand)
 
 @app.route('/')
 def hello():
-    return {'hello':'message'}
+    return 'Visit repo page for more info: https://github.com/JakubSzwajka/geo_data_rest_api' 
+
+@app.route('/all')
+def return_all_obj():
+    return return_all_objs()
 
 @manager.command
 def run():
@@ -28,7 +33,6 @@ def run():
 
 @manager.command
 def test():
-    """Runs the unit tests."""
     tests = unittest.TestLoader().discover('app/test', pattern='test*.py')
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():

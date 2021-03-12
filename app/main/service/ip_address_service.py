@@ -2,6 +2,7 @@ from warnings import resetwarnings
 from app.main import db
 from app.main.model import ip_address
 from app.main.model.ip_address import Ip_address, single_ip_model
+from app.main.utils import get_ip_of_url
 from flask_restful import marshal
 
 def create_new_ip_address(data):
@@ -29,8 +30,11 @@ def update_ip_address(data):
     return result_obj
 
 def get_ip_address(args):
-    return Ip_address.query.filter_by(ip=args['ip']).first()
-    
+    if 'ip' in args.keys():
+        return Ip_address.query.filter_by(ip=args['ip']).first()
+    elif 'url' in args.keys():
+        return Ip_address.query.filter_by(ip=get_ip_of_url(args['url'])).first()
+
 def delete_ip_address(ip):
     obj = get_ip_address(ip)
     if not obj: 
