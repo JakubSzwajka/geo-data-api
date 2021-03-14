@@ -1,10 +1,22 @@
 from re import search
 from warnings import resetwarnings
+
+import sqlalchemy
+from sqlalchemy import exc
 from app.main import db
 from app.main.model import ip_address
 from app.main.model.ip_address import Ip_address, single_ip_model
 from app.main.utils import get_ip_of_url, ip_ver4_validator, ip_ver6_validator
 from flask_restful import marshal
+
+from app.main.service.ip_stack_service import Ipstack_service
+
+class Database_error(Exception):
+    def __init__(self, message):
+        self.message = message
+        self.error_code = 503
+    def __str__(self):
+        return self.message
 
 class DataError(Exception):
     def __init__(self, error_data, error_element, message, error_code = 400 ):
@@ -26,6 +38,13 @@ class NotFoundError(Exception):
     def __str__(self):
         return f"there is no {self.search_for_key} : {self.search_for_value}"
     
+def parse_dict_to_ip_obj_constructor(dict):
+    return Ip_address(
+        ip = dict["ip"],
+        type = dict["type"],
+        continent_code = dict["continent_code"]
+    )
+
 def validate_data(data):
     if data["type"] == 'ipv4': 
         ip_valid = ip_ver4_validator(data["ip"])
@@ -51,17 +70,21 @@ def create_new_ip_address(data):
     if data_status != 200: 
         raise DataError(data,'ip', f"Wrong ip provided: {data['ip']}",  data_status)
 
-    result_obj = Ip_address.query.filter_by(ip=data["ip"]).first()
-    if result_obj:
+    try:
+        result_obj = get_ip_by_ip(data['ip'])
         raise DataError(data,'ip', f"Object with ip:{data['ip']} already exists", 409)
+    
+    except NotFoundError as error:
+        ip_obj = Ip_address(
+            ip = data['ip'],
+            type = data['type'],
+            continent_code = data['continent_code']
+        )    
+        save_changes(ip_obj)
 
-    ip_obj = Ip_address(
-        ip = data['ip'],
-        type = data['type'],
-        continent_code = data['continent_code']
-    )    
-
-    save_changes(ip_obj)
+    except sqlalchemy.exc.OperationalError as error:
+        raise Database_error("Database system is not available")
+    
     return ip_obj 
 
 def create_new_ip_addresses(data):
@@ -79,18 +102,8 @@ def create_new_ip_addresses(data):
 
     return new_obj_list
 
-def update_ip_address(data):
-    result_obj = Ip_address.query.filter_by(ip=data['ip']).first()
-    if not result_obj:
-        return 
-
-    for key, value in data.items():
-        setattr(result_obj, key, value)
-
-    save_changes(result_obj)
-    return result_obj
-
 def get_ip_by_ip(ip):
+
     obj = Ip_address.query.filter_by(ip=ip).first()
     if not obj: 
         raise NotFoundError( search_for_key='ip', search_for_value=ip)
@@ -104,22 +117,45 @@ def get_ip_by_url(url):
         raise NotFoundError( search_for_key='ip', search_for_value=ip)
     return obj 
 
+def update_ip_address(data):
+    try:
+        result_obj = get_ip_by_ip(data['ip'])
+    except sqlalchemy.exc.OperationalError as error:
+        raise Database_error("Database system is not available")
+
+    for key, value in data.items():
+        setattr(result_obj, key, value)
+
+    save_changes(result_obj)
+    return result_obj
+
     
 def get_ip_address(args):
     if 'ip' in args.keys() and type(args['ip']) != list:    
-        return get_ip_by_ip(args['ip'])
+        try:
+            return get_ip_by_ip(args['ip'])
+        except sqlalchemy.exc.OperationalError as error:
+            # database is down
+            return parse_dict_to_ip_obj_constructor(Ipstack_service.single_query(args['ip']))
 
     elif 'ip' in args.keys() and type(args['ip']) == list:
         found_objs = []
+        
         for query_ip in args['ip']:
             try:
                 found_objs.append(get_ip_by_ip(query_ip))
             except NotFoundError as error:
                 found_objs.append(Ip_address(ip = str(error)))
+            except sqlalchemy.exc.OperationalError as error:
+                found_objs.append(parse_dict_to_ip_obj_constructor(Ipstack_service.single_query(query_ip)))
+    
         return found_objs
         
     elif 'url' in args.keys() and type(args['url']) != list:
-        return get_ip_by_url(args['url'])
+        try:
+            return get_ip_by_url(args['url'])
+        except sqlalchemy.exc.OperationalError as error:
+            return parse_dict_to_ip_obj_constructor(Ipstack_service.single_query(args['url']))
 
     elif 'url' in args.keys() and type(args['url'] == list):
         found_objs = []
@@ -128,8 +164,12 @@ def get_ip_address(args):
                 found_objs.append(get_ip_by_url(query_url))
             except NotFoundError as error:
                 found_objs.append(Ip_address(ip = str(error)))
+            except sqlalchemy.exc.OperationalError as error:
+                found_objs.append(parse_dict_to_ip_obj_constructor(Ipstack_service.single_query(query_url)))
+    
         return found_objs
         
+
 def delete_ip_address(ip):
     obj = get_ip_address(ip)
     if not obj: 

@@ -28,11 +28,15 @@ class Ip_address_controller(Resource):
     @marshal_with(single_ip_model)
     @token_required
     def patch(self):
-        args = request.json
-        updated_obj = update_ip_address(data= args)
-        if not updated_obj:
-            abort(404, message=f"There is not obj with given ip: {args['ip']}")
-            
+
+        try:
+            args = request.json
+            updated_obj = update_ip_address(data= args)
+        except NotFoundError as error:
+            abort(error.error_code, message = str(error))
+        except Database_error as db_error:
+            abort(db_error.error_code, message = str(db_error))
+        
         return updated_obj
 
     @token_required
@@ -41,15 +45,18 @@ class Ip_address_controller(Resource):
         
         # multiple objs
         if "data" in args.keys():
-            new_ip_obj = create_new_ip_addresses(data=args)
 
-            for i, new_obj in enumerate(new_ip_obj):
-                dict_obj = dict(marshal(new_obj, single_ip_model))
-                filtered = { key: value for key, value in dict_obj.items() if value is not None}
-                new_ip_obj[i] = collections.OrderedDict(filtered)
+            try: 
+                new_ip_obj = create_new_ip_addresses(data=args)
 
-            return { "response": new_ip_obj }, 200 
+                for i, new_obj in enumerate(new_ip_obj):
+                    dict_obj = dict(marshal(new_obj, single_ip_model))
+                    filtered = { key: value for key, value in dict_obj.items() if value is not None}
+                    new_ip_obj[i] = collections.OrderedDict(filtered)
 
+                return { "response": new_ip_obj }, 200 
+            except Database_error as error:
+                abort(error.error_code, message = str(error))
         # single obj
         else:
             try:
@@ -58,6 +65,9 @@ class Ip_address_controller(Resource):
                     
             except DataError as error:
                 abort( error.error_code , message=str(error))
+                
+            except Database_error as error:
+                abort(error.error_code, message = str(error))
 
     @token_required                
     def delete(self,ip_address): 

@@ -1,6 +1,8 @@
 import os
 
 SECRET_KEY = 'my_secret_key'
+IP_STACK_KEY = os.getenv('IPSTACK_KEY') or '25ec023778973eab89dd449ea092898a'
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:

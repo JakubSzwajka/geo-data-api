@@ -17,3 +17,8 @@ class BaseTestCase(TestCase):
     def tearDown(self):
         db.session.remove()
         db.drop_all()
+
+class TestCase_db_down(TestCase):
+    def create_app(self):
+        app.config.from_object('app.main.config.TestingConfig')
+        return app 
