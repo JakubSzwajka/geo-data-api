@@ -4,11 +4,11 @@ from flask_restful import Resource, marshal_with, abort, reqparse, marshal
 from flask_testing.utils import ContextVariableDoesNotExist
 from ..model.ip_address import Ip_address, single_ip_model 
 from ..service.ip_address_service import * 
-
+from app.main.utils import token_required
 import collections
 
 class Ip_address_controller(Resource):
-    
+    @token_required
     def get(self):
         args = request.json 
 
@@ -26,6 +26,7 @@ class Ip_address_controller(Resource):
 
 
     @marshal_with(single_ip_model)
+    @token_required
     def patch(self):
         args = request.json
         updated_obj = update_ip_address(data= args)
@@ -34,6 +35,7 @@ class Ip_address_controller(Resource):
             
         return updated_obj
 
+    @token_required
     def put(self):
         args = request.json 
         
@@ -56,7 +58,8 @@ class Ip_address_controller(Resource):
                     
             except DataError as error:
                 abort( error.error_code , message=str(error))
-                
+
+    @token_required                
     def delete(self,ip_address): 
         result = delete_ip_address(ip_address)
         if result == 1: 

@@ -5,9 +5,23 @@ from app.main.utils import get_ip_of_url
 import unittest
 import json
 
+
+def get_token(self):
+    token_resp =  self.client.get(
+        '/login',
+        data=json.dumps(dict(
+            user = "admin",
+            password = "admin"
+        )),
+        content_type='application/json',
+    )
+
+    token_data = json.loads(token_resp.data.decode())  
+    return token_data["token"]
+
 def add_new_obj_by_ip(self, ip, type = 'ipv4', continent_code = 'EU'):
     return self.client.put(
-        '/ip_data',
+        f'/ip_data?token={get_token(self)}',
         data=json.dumps(dict(
             ip = ip,
             type = type,
@@ -18,17 +32,16 @@ def add_new_obj_by_ip(self, ip, type = 'ipv4', continent_code = 'EU'):
 
 def add_multiple_objs(self, list_ips ):
     return self.client.put(
-        '/ip_data',
+        f'/ip_data?token={get_token(self)}',
         data=json.dumps(dict(
             data = [ dict( ip = ip, type = 'ipv4', continent_code = 'EU' ) for ip in list_ips ]
         )),
         content_type='application/json'
     )
-    
 
 def get_obj_by_ip(self, ip ):
     return self.client.get(
-        '/ip_data',
+        f'/ip_data?token={get_token(self)}',
         data=json.dumps(dict(
            ip = ip 
         )),
@@ -37,7 +50,7 @@ def get_obj_by_ip(self, ip ):
 
 def get_multiple_objs_by_ips(self, ips):
     return self.client.get(
-        '/ip_data',
+        f'/ip_data?token={get_token(self)}',
         data=json.dumps(dict(
             ip = ips
         )),
@@ -46,7 +59,7 @@ def get_multiple_objs_by_ips(self, ips):
 
 def get_multiple_objs_by_urls(self, urls):
     return self.client.get(
-        '/ip_data',
+        f'/ip_data?token={get_token(self)}',
         data=json.dumps(dict(
             url = urls
         )),
@@ -55,7 +68,7 @@ def get_multiple_objs_by_urls(self, urls):
 
 def get_obj_by_url(self, url ):
     return self.client.get(
-        '/ip_data',
+        f'/ip_data?token={get_token(self)}',
         data=json.dumps(dict(
            url = url
         )),
@@ -64,7 +77,7 @@ def get_obj_by_url(self, url ):
 
 def update_obj(self, ip, type, continent_code):
     return self.client.patch(
-        '/ip_data',
+        f'/ip_data?token={get_token(self)}',
         data=json.dumps(dict(
             ip = ip,
             type = type,
