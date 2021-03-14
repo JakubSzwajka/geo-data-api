@@ -5,7 +5,7 @@ import json
 
 
 single_ip_model = {
-    'id': fields.Integer,
+    # 'id': fields.Integer,
     'ip': fields.String,
     'type':fields.String,
     'continent_code': fields.String,

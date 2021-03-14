@@ -1,12 +1,23 @@
 import unittest
 from app.main.utils import * 
+from app.test.base import BaseTestCase
 
-# class TestUtilsCases(unittest.TestCase):
-#     def test_provide_ip_for_google_address(self):
-#         google_ip = get_ip_of_url('www.google.com')
-#         # print(google_ip)
-#         self.assertEqual(google_ip, '172.217.16.36' )
+class utils_test_case(BaseTestCase):
+    
+    def test_ip_ver4_valid_string(self):
+        self.assertTrue(ip_ver4_validator('89.151.32.233'))
+        
+    def test_ip_ver4_invalid_string(self):
+        self.assertFalse(ip_ver4_validator('89.151.32.1233'))
+    
+    def test_ip_ver4_number(self):
+        self.assertFalse(ip_ver4_validator(12343))
+    
+    def test_ip_ver6_valid_string(self):
+        self.assertTrue(ip_ver6_validator("2607:f8b0:4004:805::2004"))
 
-#     def test_provide_url_for_google_from_ip(self):
-#         *_, google_url = get_url_from_ip('172.217.16.36')
-#         self.assertIn('172.217.16.36', google_url )
+    def test_ip_ver6_invalid_string(self):
+        self.assertFalse(ip_ver6_validator("260712:f8b0:04004:805::2004"))
+
+    def test_ip_ver6_number(self):
+        self.assertFalse(ip_ver6_validator(2607120040048052004))
