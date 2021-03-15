@@ -1,4 +1,5 @@
-from flask import make_response
+import json
+from flask import make_response, Response
 from flask.globals import request
 from flask_restful import Resource, marshal_with, abort, reqparse, marshal
 from flask_testing.utils import ContextVariableDoesNotExist
@@ -53,8 +54,8 @@ class Ip_address_controller(Resource):
                 #     filtered = { key: value for key, value in dict_obj.items() if value is not None}
                 #     response_list.append(filtered)
                     
-
-                return { "response": marshal(new_ip_obj, single_ip_model) },  201
+                message = json.dumps({ "response": marshal(new_ip_obj, single_ip_model)}) 
+                return Response(message, status = 201, mimetype = 'application/json')
             except Database_error as error:
                 abort(error.error_code, message = str(error))
                 
