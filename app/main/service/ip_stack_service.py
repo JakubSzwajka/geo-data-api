@@ -7,4 +7,5 @@ class Ipstack_service:
 
     def single_query(ip):
         response = requests.get(f"{Ipstack_service.root_url}{ip}?access_key={IP_STACK_KEY}")
-        return response.json()
+        response_dict = response.json()
+        return response_dict

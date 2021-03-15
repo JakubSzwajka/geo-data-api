@@ -2,7 +2,6 @@ from re import search
 from warnings import resetwarnings
 
 import sqlalchemy
-from sqlalchemy import exc
 from app.main import db
 from app.main.model import ip_address
 from app.main.model.ip_address import Ip_address, single_ip_model
@@ -10,6 +9,12 @@ from app.main.utils import get_ip_of_url, ip_ver4_validator, ip_ver6_validator
 from flask_restful import marshal
 
 from app.main.service.ip_stack_service import Ipstack_service
+
+class IPStack_error(Exception):
+    def __init__(self, data):
+        self.data = data
+    def __str__(self):
+        return str(self.data['info'])
 
 class Database_error(Exception):
     def __init__(self, message):
@@ -39,7 +44,10 @@ class NotFoundError(Exception):
         return f"there is no {self.search_for_key} : {self.search_for_value}"
     
 def parse_dict_to_ip_obj_constructor(dict):
-    
+
+    if "success" in dict.keys() and dict["success"] == False: 
+        raise IPStack_error( dict['error'] )
+
     return Ip_address(
         ip = dict["ip"],
         type = dict["type"],

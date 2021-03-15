@@ -3,6 +3,7 @@ from flask import make_response, Response, jsonify
 from flask.globals import request
 from flask_restful import Resource, marshal_with, abort, reqparse, marshal
 from flask_testing.utils import ContextVariableDoesNotExist
+from sqlalchemy import exc
 from ..model.ip_address import Ip_address, single_ip_model 
 from ..service.ip_address_service import * 
 from app.main.utils import token_required
@@ -21,7 +22,10 @@ class Ip_address_controller(Resource):
                 return response_obj_list, 200
             else:
                 return marshal(ip_obj, single_ip_model), 200
-                
+        
+        except IPStack_error as error: 
+            abort(error.data['code'], message = str(error))
+
         except NotFoundError as error: 
             abort(error.error_code, message = str(error))
 

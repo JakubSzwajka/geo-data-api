@@ -8,6 +8,7 @@ import re
 import jwt
 from functools import wraps
 
+import sqlalchemy
 from app.main.config import SECRET_KEY
 from app.main.model.ip_address import Ip_address, single_ip_model
 
@@ -18,8 +19,12 @@ def get_url_from_ip(ip):
     return socket.gethostbyaddr(ip)
 
 def return_all_objs():
-    objs = Ip_address.query.all()
-    ord_dict_list = [marshal(obj, single_ip_model) for obj in objs]
+    try:
+        objs = Ip_address.query.all()
+        ord_dict_list = [marshal(obj, single_ip_model) for obj in objs]
+    except sqlalchemy.exc.OperationalError as error: 
+        return {"message": "Database system is not available"}
+
     return {"result": [dict(ord_dict) for ord_dict in ord_dict_list ]}
 
 def ip_ver4_validator(ip):
