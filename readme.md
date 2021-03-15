@@ -148,8 +148,10 @@ To add data use **POST** request. You can send two types of Json data. First is 
 To update ip data use put requests. The structure is the same as **POST** method but with corrected data. 
 
 ### DELETE method 
-To delete ip data objs from database use DELETE method. The structure is the same as **GET** method.
+To delete ip data objs from database use DELETE method. The structure is the same as **GET** method but only for ip numbers.
 
+### List all in db 
+You can use ```http://localhost:5000/all?token={your_token}``` to list all data in db
 
 # Run local 
 After cloning the repo:
@@ -159,13 +161,15 @@ After cloning the repo:
 ```
 or if you want to use docker:
 ```
-  docker build -t {your_tag} 
-  docker run -p 5000:5000 -d {your_tag}
+  docker build -t {your_tag} .
+  docker run -p 5000:5000 {your_tag}
 ```
 Then you should be able to access api on http://localhost:5000/ 
 
-# Notes 
+Local db is ready to go and filled with some data. Look at ```sampledata.json``` 
 
+
+# Notes 
 Run tests  ```python manage.py test```
 
 Run local  ```python manage.py run```
