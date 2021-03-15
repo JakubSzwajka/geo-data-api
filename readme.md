@@ -2,6 +2,8 @@
 # GEO IP DATA
 Aim was to build REST api, which stores geological data based on IP. You can add/get/modify ora delete data from db. Api is deployed on Heroku [here](https://geo-data-rest-api.herokuapp.com/).
 
+In case of database error, data can still be provided by ```http://api.ipstack.com/```. Just remember to set your IP_STACK_KEY env var. 
+
 ## Authorization 
 Api requires JWT authorization. To obrain token use: 
 ```
@@ -171,7 +173,7 @@ Local db is ready to go and filled with some data. Look at ```sampledata.json```
 ## Env variables 
 
 If you run local, default setting is development. Remember to setup env variables like: 
-* IP_STACK_KEY -if db is unaccessible it is used to access ```http://api.ipstack.com/``` API
+* IP_STACK_KEY -if db is unaccessible it is used to access ```http://api.ipstack.com/``` API.
 
 
 # Notes 
