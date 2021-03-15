@@ -41,7 +41,7 @@ class Ip_address_controller(Resource):
 
     @token_required
     def put(self):
-        return 'some message1'
+        return {"message": "test"}, 200
         args = request.json 
         
         # multiple objs

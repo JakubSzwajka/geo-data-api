@@ -19,8 +19,7 @@ def get_url_from_ip(ip):
 
 def return_all_objs():
     objs = Ip_address.query.all()
-    # ord_dict_list = [marshal(obj, single_ip_model) for obj in objs]
-    ord_dict_list = [obj.serialize() for obj in objs]
+    ord_dict_list = [marshal(obj, single_ip_model) for obj in objs]
     return {"result": [dict(ord_dict) for ord_dict in ord_dict_list ]}
 
 def ip_ver4_validator(ip):
