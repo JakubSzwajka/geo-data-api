@@ -1,8 +1,8 @@
-"""initial database migration
+"""init migrations
 
-Revision ID: b31c2b61d88d
+Revision ID: 1d92619740ea
 Revises: 
-Create Date: 2021-03-11 23:17:02.512588
+Create Date: 2021-03-15 12:21:00.473192
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b31c2b61d88d'
+revision = '1d92619740ea'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,6 +23,15 @@ def upgrade():
     sa.Column('ip', sa.String(length=45), nullable=False),
     sa.Column('type', sa.String(length=4), nullable=False),
     sa.Column('continent_code', sa.String(length=4), nullable=True),
+    sa.Column('continent_name', sa.String(length=30), nullable=True),
+    sa.Column('country_code', sa.String(length=10), nullable=True),
+    sa.Column('country_name', sa.String(length=30), nullable=True),
+    sa.Column('region_code', sa.String(length=30), nullable=True),
+    sa.Column('region_name', sa.String(length=30), nullable=True),
+    sa.Column('city', sa.String(length=30), nullable=True),
+    sa.Column('zip', sa.String(length=10), nullable=True),
+    sa.Column('latitude', sa.Float(), nullable=True),
+    sa.Column('longitude', sa.Float(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###

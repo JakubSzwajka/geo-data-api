@@ -26,12 +26,12 @@ class Ip_address(db.Model):
     type = db.Column(db.String(4), nullable=False) #ipv4 / ipv6
     continent_code = db.Column(db.String(4), nullable=True)
     continent_name = db.Column(db.String(30))
-    country_code = db.Column(db.String(5))
+    country_code = db.Column(db.String(10))
     country_name = db.Column(db.String(30))
     region_code = db.Column(db.String(30))
     region_name = db.Column(db.String(30))
     city = db.Column(db.String(30))
-    zip = db.Column(db.String(5))
+    zip = db.Column(db.String(10))
     latitude = db.Column(db.Float) # 14 digits precision needed 
     longitude = db.Column(db.Float) # 14 digits precision needed
 
