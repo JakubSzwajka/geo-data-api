@@ -9,7 +9,7 @@ class Ip_address_objs_adding_test_case(BaseTestCase):
         tested_with_ip = "123.123.123.123"
         with self.client:
             response = add_new_obj_by_ip(self, tested_with_ip)
-            response_data = json.loads(response.data.decode())  
+            response_data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
             self.assertEqual(response_data["ip"], tested_with_ip)
 

@@ -126,8 +126,13 @@ def update_ip_address(data):
 
     for key, value in data.items():
         setattr(result_obj, key, value)
+    db.session.commit()
 
-    save_changes(result_obj)
+    try:
+        result_obj = get_ip_by_ip(data['ip'])
+    except sqlalchemy.exc.OperationalError as error:
+        raise Database_error("Database system is not available")
+
     return result_obj
 
     

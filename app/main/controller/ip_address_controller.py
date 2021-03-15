@@ -26,20 +26,19 @@ class Ip_address_controller(Resource):
         except NotFoundError as error: 
             abort(error.error_code, message = str(error))
 
-
-    @marshal_with(single_ip_model)
     @token_required
     def patch(self):
 
         try:
             args = request.json
-            updated_obj = update_ip_address(data= args)
+            updated_obj = update_ip_address(data= args).serialize()
+
         except NotFoundError as error:
             abort(error.error_code, message = str(error))
         except Database_error as db_error:
             abort(db_error.error_code, message = str(db_error))
         
-        return updated_obj
+        return updated_obj, 200
 
     @token_required
     def put(self):
@@ -50,11 +49,10 @@ class Ip_address_controller(Resource):
 
             try: 
                 new_ip_obj = create_new_ip_addresses(data=args)
-
                 for i, new_obj in enumerate(new_ip_obj):
                     dict_obj = dict(marshal(new_obj, single_ip_model))
                     filtered = { key: value for key, value in dict_obj.items() if value is not None}
-                    new_ip_obj[i] = collections.OrderedDict(filtered)
+                    new_ip_obj[i] = filtered
 
                 return { "response": new_ip_obj }, 200 
             except Database_error as error:
@@ -63,7 +61,7 @@ class Ip_address_controller(Resource):
         else:
             try:
                 new_ip_obj = create_new_ip_address(data=args)
-                return marshal(new_ip_obj, single_ip_model), 201
+                return marshal(new_ip_obj,single_ip_model) , 201
                     
             except DataError as error:
                 abort( error.error_code , message=str(error))
