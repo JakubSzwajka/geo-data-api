@@ -41,6 +41,7 @@ class Ip_address_controller(Resource):
 
     @token_required
     def put(self):
+        return 'some message1'
         args = request.json 
         
         # multiple objs
@@ -61,6 +62,7 @@ class Ip_address_controller(Resource):
                 
         # single obj
         else:
+            
             try:
                 new_ip_obj = create_new_ip_address(data=args)
                 return marshal(new_ip_obj,single_ip_model) , 201
