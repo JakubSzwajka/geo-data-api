@@ -24,7 +24,7 @@ class Ip_address_controller(Resource):
                 return marshal(ip_obj, single_ip_model), 200
         
         except IPStack_error as error: 
-            abort(error.data['code'], message = str(error))
+            abort(422, message = str(error))
 
         except NotFoundError as error: 
             abort(error.error_code, message = str(error))
