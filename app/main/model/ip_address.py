@@ -35,14 +35,6 @@ class Ip_address(db.Model):
     latitude = db.Column(db.Float) # 14 digits precision needed 
     longitude = db.Column(db.Float) # 14 digits precision needed
 
-    def serialize(self):
-        dict_representation = {}
-        
-        for attrib, value in self.__dict__.items():
-            if value != None and str(attrib)[0] != '_':
-                dict_representation[attrib] = value
-        return dict_representation 
-        
     def __repr__(self):
         return f"ID: {self.id}, ip: {self.ip} - {self.type} - {self.continent_code}"
     
