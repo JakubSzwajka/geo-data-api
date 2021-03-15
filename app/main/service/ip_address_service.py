@@ -39,10 +39,20 @@ class NotFoundError(Exception):
         return f"there is no {self.search_for_key} : {self.search_for_value}"
     
 def parse_dict_to_ip_obj_constructor(dict):
+    
     return Ip_address(
         ip = dict["ip"],
         type = dict["type"],
-        continent_code = dict["continent_code"]
+        continent_code = dict["continent_code"],
+        continent_name = dict["continent_name"],
+        country_code = dict["country_code"],
+        country_name = dict["country_name"],
+        region_code = dict["region_code"],
+        region_name = dict["region_name"],
+        city = dict["city"],
+        zip = dict["zip"],
+        latitude = dict["latitude"],
+        longitude = dict["longitude"]
     )
 
 def validate_data(data):

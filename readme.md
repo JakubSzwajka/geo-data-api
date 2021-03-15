@@ -168,6 +168,11 @@ Then you should be able to access api on http://localhost:5000/
 
 Local db is ready to go and filled with some data. Look at ```sampledata.json``` 
 
+## Env variables 
+
+If you run local, default setting is development. Remember to setup env variables like: 
+* IP_STACK_KEY -if db is unaccessible it is used to access ```http://api.ipstack.com/``` API
+
 
 # Notes 
 Run tests  ```python manage.py test```
