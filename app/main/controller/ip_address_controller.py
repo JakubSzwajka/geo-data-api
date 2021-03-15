@@ -40,32 +40,25 @@ class Ip_address_controller(Resource):
 
     @token_required
     def put(self):
-        print('put 1')
         args = request.json 
-        print('put 2')
         
         # multiple objs
         if "data" in args.keys():
-            print('put 3')
 
             try: 
                 new_ip_obj = create_new_ip_addresses(data=args)
-                print(new_ip_obj)
-                print('put 4')
+
                 for i, new_obj in enumerate(new_ip_obj):
-                    dict_obj = dict(marshal(new_obj, single_ip_model))
+                    dict_obj = marshal(new_obj, single_ip_model)
                     filtered = { key: value for key, value in dict_obj.items() if value is not None}
                     new_ip_obj[i] = filtered
 
-                print('put 5')
-                return make_response({ "response": new_ip_obj },  200)
+                return { "response": new_ip_obj },  200
             except Database_error as error:
-                print('put 6')
                 abort(error.error_code, message = str(error))
-
+                
         # single obj
         else:
-            print('put 7')
             try:
                 new_ip_obj = create_new_ip_address(data=args)
                 return marshal(new_ip_obj,single_ip_model) , 201
