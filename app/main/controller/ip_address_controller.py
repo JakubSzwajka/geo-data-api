@@ -49,6 +49,7 @@ class Ip_address_controller(Resource):
 
             try: 
                 new_ip_obj = create_new_ip_addresses(data=args)
+                print(new_ip_obj)
                 for i, new_obj in enumerate(new_ip_obj):
                     dict_obj = dict(marshal(new_obj, single_ip_model))
                     filtered = { key: value for key, value in dict_obj.items() if value is not None}
