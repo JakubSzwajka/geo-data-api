@@ -100,3 +100,17 @@ class Ip_address_getting_test_case(BaseTestCase):
             self.assertIn('there is no ip : 555.123.123.113', response_ips_list)
 
 
+    def test_get_multiple_ip_address_obj_by_url_and_ips(self):
+        testing_ips = ["123.123.123.113", "123.123.123.111", "555.123.123.113"]
+        testing_urls = ["www.google.com", "www.google.pl", "www.youtube.com"]
+        testing_ips_from_urls = [ get_ip_of_url(url) for url in testing_urls]
+        
+        with self.client:
+            response_add = add_multiple_objs(self, testing_ips + testing_ips_from_urls)
+            response_get = get_multiple_by_ip_and_url(self, testing_ips, testing_urls)
+            response_data = json.loads(response_get.data.decode())
+            response_ips_list = [ obj["ip"] for obj in response_data["response"]]
+
+            for ip in testing_ips + testing_ips_from_urls:
+                self.assertIn(ip, response_ips_list)    
+            

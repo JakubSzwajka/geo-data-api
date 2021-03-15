@@ -14,7 +14,7 @@ def get_token(self):
     return token_data["token"]
 
 def add_new_obj_by_ip(self, ip, type = 'ipv4', continent_code = 'EU'):
-    return self.client.put(
+    return self.client.post(
         f'/ip_data?token={get_token(self)}',
         data=json.dumps(dict(
             ip = ip,
@@ -25,7 +25,7 @@ def add_new_obj_by_ip(self, ip, type = 'ipv4', continent_code = 'EU'):
     )
 
 def add_multiple_objs(self, list_ips ):
-    return self.client.put(
+    return self.client.post(
         f'/ip_data?token={get_token(self)}',
         data=json.dumps(dict(
             data = [ dict( ip = ip, type = 'ipv4', continent_code = 'EU' ) for ip in list_ips ]
@@ -70,12 +70,25 @@ def get_obj_by_url(self, url ):
     )
 
 def update_obj(self, ip, type, continent_code):
-    return self.client.patch(
+    return self.client.put(
         f'/ip_data?token={get_token(self)}',
         data=json.dumps(dict(
             ip = ip,
             type = type,
             continent_code = continent_code 
+        )),
+        content_type='application/json'
+    )
+
+def update_multiple_ip_obj(self, ips, type, continent_code):
+    return self.client.put(
+        f'/ip_data?token={get_token(self)}',
+        data=json.dumps(dict(
+            data = [dict(
+                ip = ip,
+                type = type,
+                continent_code = continent_code 
+            ) for ip in ips ] 
         )),
         content_type='application/json'
     )
@@ -91,4 +104,23 @@ def delete_obj(self, ip):
             ip = ip,
         )),
         content_type='application/json'
+    )
+
+def delete_multiple_obj(self, ips):
+    return self.client.delete(
+        f'/ip_data?token={get_token(self)}',
+        data=json.dumps(dict(
+            ip = ips,
+        )),
+        content_type = 'application/json'
+    )
+
+def get_multiple_by_ip_and_url(self, ips, urls):
+    return self.client.get(
+        f'/ip_data?token={get_token(self)}',
+        data=json.dumps(dict(
+            ip = ips, 
+            url = urls
+        )),
+        content_type = 'application/json'
     )

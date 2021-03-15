@@ -119,72 +119,107 @@ def get_ip_by_url(url):
     return obj 
 
 def update_ip_address(data):
-    try:
-        result_obj = get_ip_by_ip(data['ip'])
-    except sqlalchemy.exc.OperationalError as error:
-        raise Database_error("Database system is not available")
 
-    for key, value in data.items():
-        setattr(result_obj, key, value)
-    db.session.commit()
+    if 'data' in data.keys():
+        result_list = []
+        for ip_obj in data['data']:
+            try:
+                result_list.append(update_ip_address(ip_obj))
+            except NotFoundError as error:
+                result_list.append(Ip_address(ip = str(error)))
 
-    try:
-        result_obj = get_ip_by_ip(data['ip'])
-    except sqlalchemy.exc.OperationalError as error:
-        raise Database_error("Database system is not available")
+        return result_list
+    else: 
+        try:
+            result_obj = get_ip_by_ip(data['ip'])
+        except sqlalchemy.exc.OperationalError as error:
+            raise Database_error("Database system is not available")
+
+        for key, value in data.items():
+            setattr(result_obj, key, value)
+        db.session.commit()
+
+        try:
+            result_obj = get_ip_by_ip(data['ip'])
+        except sqlalchemy.exc.OperationalError as error:
+            raise Database_error("Database system is not available")
 
     return result_obj
 
     
 def get_ip_address(args):
+    
+    total_objs_found = []
+    
     if 'ip' in args.keys() and type(args['ip']) != list:    
         try:
-            return get_ip_by_ip(args['ip'])
+            total_objs_found.append(get_ip_by_ip(args['ip']))
         except sqlalchemy.exc.OperationalError as error:
             # database is down
             return parse_dict_to_ip_obj_constructor(Ipstack_service.single_query(args['ip']))
 
     elif 'ip' in args.keys() and type(args['ip']) == list:
-        found_objs = []
-        
+
         for query_ip in args['ip']:
             try:
-                found_objs.append(get_ip_by_ip(query_ip))
+                total_objs_found.append(get_ip_by_ip(query_ip))
             except NotFoundError as error:
-                found_objs.append(Ip_address(ip = str(error)))
+                total_objs_found.append(Ip_address(ip = str(error)))
             except sqlalchemy.exc.OperationalError as error:
-                found_objs.append(parse_dict_to_ip_obj_constructor(Ipstack_service.single_query(query_ip)))
+                total_objs_found.append(parse_dict_to_ip_obj_constructor(Ipstack_service.single_query(query_ip)))
     
-        return found_objs
         
-    elif 'url' in args.keys() and type(args['url']) != list:
+    if 'url' in args.keys() and type(args['url']) != list:
         try:
-            return get_ip_by_url(args['url'])
+            total_objs_found.append((get_ip_by_url(args['url'])))
         except sqlalchemy.exc.OperationalError as error:
             return parse_dict_to_ip_obj_constructor(Ipstack_service.single_query(args['url']))
 
     elif 'url' in args.keys() and type(args['url'] == list):
-        found_objs = []
+
         for query_url in args['url']:
             try:
-                found_objs.append(get_ip_by_url(query_url))
+                total_objs_found.append(get_ip_by_url(query_url))
             except NotFoundError as error:
-                found_objs.append(Ip_address(ip = str(error)))
+                total_objs_found.append(Ip_address(ip = str(error)))
             except sqlalchemy.exc.OperationalError as error:
-                found_objs.append(parse_dict_to_ip_obj_constructor(Ipstack_service.single_query(query_url)))
+                total_objs_found.append(parse_dict_to_ip_obj_constructor(Ipstack_service.single_query(query_url)))
     
-        return found_objs
+    if len(total_objs_found) == 1:
+        return total_objs_found[0]
+    return total_objs_found
         
 
 def delete_ip_address(data):
-
     try:
-        obj = get_ip_by_ip(data['ip'])
-        db.session.delete(obj)
+        deleted_ips = []
+        
+        if type(data['ip']) == list: 
+        
+            for ip in data['ip']:
+                try:
+                    obj = get_ip_by_ip(ip)
+                    db.session.delete(obj)
+                    deleted_ips.append(obj)
+        
+                except NotFoundError as error:
+                    deleted_ips.append(Ip_address(ip = str(error)))
+
+        else: 
+            obj = get_ip_by_ip(data['ip'])
+            db.session.delete(obj)
+            deleted_ips.append(obj)
+
         db.session.commit()
+
     except sqlalchemy.exc.OperationalError as error:
         raise Database_error("Database system is not available")
+        
+    except NotFoundError as error:
+        raise error
 
+    return deleted_ips
+    
 
 def get_all_ip_addresses(data): 
     objs = Ip_address.query.all()

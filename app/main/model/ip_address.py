@@ -1,23 +1,38 @@
+from typing import OrderedDict
 from .. import db
 from flask_restful import fields
 
 import json
 
 
-single_ip_model = {
-    'ip': fields.String,
-    'type':fields.String,
-    'continent_code': fields.String,
-    'continent_name': fields.String,
-    'country_code': fields.String,
-    'country_name': fields.String,
-    'region_code': fields.String,
-    'region_name': fields.String,
-    'city': fields.String,
-    'zip': fields.String,
-    'latitude' : fields.Float, 
-    'longitude' : fields.Float,
-}
+single_ip_model = OrderedDict(
+        ip = fields.String,
+        type = fields.String,
+        continent_code = fields.String,
+        continent_name = fields.String,
+        country_code = fields.String,
+        country_name = fields.String,
+        region_code = fields.String,
+        region_name = fields.String,
+        city = fields.String,
+        zip = fields.String,
+        latitude = fields.Float, 
+        longitude = fields.Float
+) 
+# {
+#     'ip'= fields.String,
+#     'type':fields.String,
+#     'continent_code': fields.String,
+#     'continent_name': fields.String,
+#     'country_code': fields.String,
+#     'country_name': fields.String,
+#     'region_code': fields.String,
+#     'region_name': fields.String,
+#     'city': fields.String,
+#     'zip': fields.String,
+#     'latitude' : fields.Float, 
+#     'longitude' : fields.Float,
+# }
 
 class Ip_address(db.Model):
     id = db.Column(db.Integer, primary_key=True)
