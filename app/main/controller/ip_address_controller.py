@@ -1,4 +1,4 @@
-
+from flask import make_response
 from flask.globals import request
 from flask_restful import Resource, marshal_with, abort, reqparse, marshal
 from flask_testing.utils import ContextVariableDoesNotExist
@@ -54,7 +54,7 @@ class Ip_address_controller(Resource):
                     filtered = { key: value for key, value in dict_obj.items() if value is not None}
                     new_ip_obj[i] = filtered
 
-                return { "response": new_ip_obj }, 200 
+                return make_response({ "response": new_ip_obj },  200)
             except Database_error as error:
                 abort(error.error_code, message = str(error))
         # single obj
