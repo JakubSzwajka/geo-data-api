@@ -170,14 +170,15 @@ def get_ip_address(args):
         return found_objs
         
 
-def delete_ip_address(ip):
-    obj = get_ip_address(ip)
-    if not obj: 
-        return 1 
-    else:
+def delete_ip_address(data):
+
+    try:
+        obj = get_ip_by_ip(data['ip'])
         db.session.delete(obj)
-    db.session.commit()
-    return 0
+        db.session.commit()
+    except sqlalchemy.exc.OperationalError as error:
+        raise Database_error("Database system is not available")
+
 
 def get_all_ip_addresses(data): 
     objs = Ip_address.query.all()

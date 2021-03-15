@@ -6,3 +6,5 @@ key
 *.vscode
 
 **/db
+
+*.env

@@ -5,7 +5,6 @@ import json
 
 
 single_ip_model = {
-    # 'id': fields.Integer,
     'ip': fields.String,
     'type':fields.String,
     'continent_code': fields.String,
@@ -23,7 +22,6 @@ single_ip_model = {
 class Ip_address(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ip = db.Column(db.String(45), nullable=False) #45 brecause of ipv4 mapped to ipv6
-
     # some other fields
     type = db.Column(db.String(4), nullable=False) #ipv4 / ipv6
     continent_code = db.Column(db.String(4), nullable=True)
@@ -37,9 +35,14 @@ class Ip_address(db.Model):
     latitude = db.Column(db.Float) # 14 digits precision needed 
     longitude = db.Column(db.Float) # 14 digits precision needed
 
-    def toJson(self):
-        return json.dumps(self, default= lambda o: o.__dict__, sort_keys=True, indent=4)
-
+    def serialize(self):
+        dict_representation = {}
+        
+        for attrib, value in self.__dict__.items():
+            if value != None and str(attrib)[0] != '_':
+                dict_representation[attrib] = value
+        return dict_representation 
+        
     def __repr__(self):
         return f"ID: {self.id}, ip: {self.ip} - {self.type} - {self.continent_code}"
     

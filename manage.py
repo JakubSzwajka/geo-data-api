@@ -46,7 +46,7 @@ def login():
         token = jwt.encode({
             "user": "admin",
             "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24),
-            }, key= SECRET_KEY )
+            }, key= str(SECRET_KEY) )
         
         return jsonify({'token': token})
 
@@ -60,7 +60,7 @@ def run():
 
 @manager.command
 def test():
-    tests = unittest.TestLoader().discover('app/test', pattern='test*.py')
+    tests = unittest.TestLoader().discover('app/test', pattern='test_*.py')
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():
         return 0

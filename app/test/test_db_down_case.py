@@ -52,4 +52,13 @@ class Ip_address_add_test_case_db_down(TestCase_db_down):
             self.assertEqual(response_add.status_code, 503)
             self.assertEqual(response_data["message"], "Database system is not available")
     
-    
+class Ip_address_delete_test_case_db_down(TestCase_db_down):
+    def test_delete_ip_address_obj(self):
+        tested_with_ip = "123.123.123.113"
+        with self.client:
+            response_add = add_new_obj_by_ip(self, tested_with_ip)
+            response_del = delete_obj(self, tested_with_ip)
+            response_data = json.loads(response_del.data.decode())
+            self.assertEqual(response_add.status_code, 503)
+            self.assertEqual(response_data["message"], "Database system is not available")
+            

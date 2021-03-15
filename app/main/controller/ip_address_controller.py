@@ -16,10 +16,12 @@ class Ip_address_controller(Resource):
             ip_obj = get_ip_address(args)
             
             if type(ip_obj) == list: 
-                response_obj_list = { "response" : [ marshal(obj, single_ip_model) for obj in ip_obj] } 
+                # response_obj_list = { "response" : [ marshal(obj, single_ip_model) for obj in ip_obj] } 
+                response_obj_list = { "response" : [ obj.serialize() for obj in ip_obj] } 
                 return response_obj_list, 200
             else:
-                return marshal(ip_obj, single_ip_model), 200
+                # return marshal(ip_obj, single_ip_model), 200
+                return ip_obj.serialize(), 200
 
         except NotFoundError as error: 
             abort(error.error_code, message = str(error))
@@ -70,9 +72,15 @@ class Ip_address_controller(Resource):
                 abort(error.error_code, message = str(error))
 
     @token_required                
-    def delete(self,ip_address): 
-        result = delete_ip_address(ip_address)
-        if result == 1: 
-            abort(404, message=f"There is not obj with given ip: {ip_address}")
+    def delete(self): 
+
+        args = request.json 
+        try:
+            result = delete_ip_address(args)
+        except Database_error as error:
+            abort(error.error_code, message=str(error))
+            
+        except NotFoundError as error:
+            abort(error.error_code, message=str(error))
 
         return {"message":f"{ip_address} deleted"}, 204

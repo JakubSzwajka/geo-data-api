@@ -9,7 +9,7 @@ def get_token(self):
         )),
         content_type='application/json',
     )
-
+    
     token_data = json.loads(token_resp.data.decode())  
     return token_data["token"]
 
@@ -82,3 +82,13 @@ def update_obj(self, ip, type, continent_code):
 
 def message_contains( phrase, message ):
     return phrase in message
+
+
+def delete_obj(self, ip):
+    return self.client.delete(
+        f'/ip_data?token={get_token(self)}',
+        data=json.dumps(dict(
+            ip = ip,
+        )),
+        content_type='application/json'
+    )

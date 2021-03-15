@@ -1,7 +1,7 @@
 import os
 
-SECRET_KEY = 'my_secret_key'
-IP_STACK_KEY = os.getenv('IPSTACK_KEY')
+SECRET_KEY = str(os.getenv('SECRET_KEY'))
+IP_STACK_KEY = str(os.getenv('IP_STACK_KEY'))
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -22,7 +22,7 @@ class TestingConfig(Config):
     DEBUG = True
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///../../db/database_test.db'
-
+    
 config_by_name = dict(
     dev=DevelopmentConfig,
     prod=ProductionConfig,
