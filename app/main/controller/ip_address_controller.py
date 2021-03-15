@@ -47,13 +47,14 @@ class Ip_address_controller(Resource):
 
             try: 
                 new_ip_obj = create_new_ip_addresses(data=args)
+                # response_list = []
+                # for i, new_obj in enumerate(new_ip_obj):
+                #     dict_obj = dict(marshal(new_obj, single_ip_model))
+                #     filtered = { key: value for key, value in dict_obj.items() if value is not None}
+                #     response_list.append(filtered)
+                    
 
-                for i, new_obj in enumerate(new_ip_obj):
-                    dict_obj = marshal(new_obj, single_ip_model)
-                    filtered = { key: value for key, value in dict_obj.items() if value is not None}
-                    new_ip_obj[i] = filtered
-
-                return { "response": new_ip_obj },  200
+                return { "response": marshal(new_ip_obj, single_ip_model) },  201
             except Database_error as error:
                 abort(error.error_code, message = str(error))
                 
@@ -71,7 +72,6 @@ class Ip_address_controller(Resource):
 
     @token_required                
     def delete(self): 
-
         args = request.json 
         try:
             result = delete_ip_address(args)

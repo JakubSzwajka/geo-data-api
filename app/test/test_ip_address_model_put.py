@@ -57,7 +57,7 @@ class Ip_address_objs_adding_test_case(BaseTestCase):
             response_add_with_duplicated = add_multiple_objs(self, testing_ips)
             response_data = json.loads(response_add_with_duplicated.data.decode())
             response_ips = [ resp_obj["ip"] for resp_obj in response_data["response"]]
-
+            print(response_data)
             self.assertIn("555.123.123.113", response_ips)
             self.assertIn("Object with ip:123.123.123.113 already exists", response_ips)
 
