@@ -77,9 +77,10 @@ def create_new_ip_address(data):
     except NotFoundError as error:
         ip_obj = Ip_address(
             ip = data['ip'],
-            type = data['type'],
-            continent_code = data['continent_code']
         )    
+        for key, value in data.items():
+            setattr(ip_obj, key, value)
+
         save_changes(ip_obj)
 
     except sqlalchemy.exc.OperationalError as error:
